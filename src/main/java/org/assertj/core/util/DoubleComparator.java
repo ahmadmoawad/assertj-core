@@ -16,7 +16,7 @@ import static java.lang.String.format;
 
 public class DoubleComparator extends NullSafeComparator<Double> {
 
-  private double precision;
+  private final double precision;
 
   public DoubleComparator(double epsilon) {
     this.precision = epsilon;
@@ -33,25 +33,22 @@ public class DoubleComparator extends NullSafeComparator<Double> {
   }
 
   private static boolean closeEnough(Double x, Double y, double epsilon) {
-    return x.doubleValue() == y.doubleValue() || Math.abs(x - y) <= epsilon;
+    return x.equals(y) || Math.abs(x - y) <= epsilon;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) { return true; }
+    if (o == null || getClass() != o.getClass()) { return false; }
+
+    DoubleComparator that = (DoubleComparator) o;
+
+    return Double.compare(that.precision, precision) == 0;
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    long temp = Double.doubleToLongBits(precision);
-    result = prime * result + (int) (temp ^ (temp >>> 32));
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (!(obj instanceof DoubleComparator)) return false;
-    DoubleComparator other = (DoubleComparator) obj;
-    return Double.doubleToLongBits(precision) == Double.doubleToLongBits(other.precision);
+    return Double.hashCode(precision);
   }
 
   @Override

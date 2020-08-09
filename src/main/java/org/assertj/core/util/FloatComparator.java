@@ -16,12 +16,12 @@ import static java.lang.String.format;
 
 public class FloatComparator extends NullSafeComparator<Float> {
 
-  private float precision;
+  private final float precision;
 
   public FloatComparator(float epsilon) {
     this.precision = epsilon;
   }
-  
+
   public float getEpsilon() {
     return precision;
   }
@@ -33,21 +33,22 @@ public class FloatComparator extends NullSafeComparator<Float> {
   }
 
   private boolean closeEnough(Float x, Float y, float epsilon) {
-    return x.floatValue() == y.floatValue() || Math.abs(x - y) <= epsilon;
+    return x.equals(y) || Math.abs(x - y) <= epsilon;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) { return true; }
+    if (o == null || getClass() != o.getClass()) { return false; }
+
+    FloatComparator that = (FloatComparator) o;
+
+    return Float.compare(that.precision, precision) == 0;
   }
 
   @Override
   public int hashCode() {
-    return 31 + Float.floatToIntBits(precision);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (!(obj instanceof FloatComparator)) return false;
-    FloatComparator other = (FloatComparator) obj;
-    return Float.floatToIntBits(precision) == Float.floatToIntBits(other.precision);
+    return Float.hashCode(precision);
   }
 
   @Override
